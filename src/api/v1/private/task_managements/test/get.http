@@ -1,0 +1,19 @@
+@base_url = http://localhost:3000
+@token= your_jwt_token_here
+
+### Get All Task Managements
+GET {{base_url}}/api/v1/task_managements/tasks
+Authorization: Bearer {{token}}
+
+
+### Create a New Task
+POST {{base_url}}/api/v1/task_managements/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "New Task Title1",
+  "description": "Description of the new task",
+  "status": "pending",
+  "priority": "high"
+}

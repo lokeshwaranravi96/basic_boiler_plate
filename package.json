@@ -1,16 +1,27 @@
 {
-  "dependencies": {
-    "@fastify/cors": "^11.1.0",
-    "@fastify/helmet": "^13.0.2",
-    "@fastify/jwt": "^10.0.0",
-    "@fastify/rate-limit": "^10.3.0",
-    "@fastify/swagger": "^9.6.1",
-    "@fastify/swagger-ui": "^5.2.3",
-    "@fastify/under-pressure": "^9.0.3",
-    "dotenv": "^17.2.3",
-    "fastify": "^5.6.2",
-    "fs": "^0.0.1-security",
-    "node-cache": "^5.1.2",
-    "path": "^0.12.7"
-  }
+ "type": "module",
+ "scripts": {
+  "dev": "node src/app.js"
+ },
+ "dependencies": {
+ "@fastify/autoload": "^5.0.0",
+		"@fastify/cors": "^8.2.0",
+		"@fastify/env": "^4.2.0",
+		"@fastify/helmet": "^10.1.0",
+		"@fastify/jwt": "^7.2.4",
+		"@fastify/multipart": "^7.4.1",
+		"@fastify/rate-limit": "^8.0.0",
+		"@fastify/sensible": "^5.0.0",
+		"@fastify/swagger": "^8.3.1",
+		"@fastify/swagger-ui": "^1.4.0",
+  	"@prisma/client": "^4.12.0",
+		"@scalar/fastify-api-reference": "1.25.10",
+  "dotenv": "^17.2.3",
+  "fastify-plugin": "^5.1.0",
+  "fastify-socket.io": "^5.1.0",
+  "fs": "^0.0.1-security",
+  "node-cache": "^5.1.2",
+  "path": "^0.12.7",
+  "sequelize": "^6.37.7"
+ }
 }

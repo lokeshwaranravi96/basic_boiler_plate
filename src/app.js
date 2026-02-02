@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import AutoLoad from "@fastify/autoload";
 import path from "path";
 import { fileURLToPath } from "url";
+import { giveMeStatusCodes } from "./helpers/helperFunctions.js";
 
 dotenv.config();
 
@@ -10,6 +11,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = fastify({ logger: true });
+
+// Set it globally once at app startup
+globalThis.status_codes = giveMeStatusCodes();
 
 const startServer = async () => {
   try {
@@ -24,7 +28,7 @@ const startServer = async () => {
       dir: path.join(__dirname, "api", "v1"),
       options: { prefix: "/api/v1" },
     });
-    
+
 // ❌ Block URLs containing /public/ or /private/
     app.addHook("onRequest", (req, reply, done) => {
       if (req.url.includes("/public/") || req.url.includes("/private/")) {

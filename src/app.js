@@ -8,7 +8,8 @@ import underPressure from "@fastify/under-pressure";
 import fastifyJwt from "@fastify/jwt";
 import dotenv from "dotenv";
 
-import taskManagements from "./api/v1/private/task_managements/index.js";
+import routes from "./api/v1/index.js"
+// import taskManagements from "./api/v1/private/task_managements/index.js";
 
 const app = fastify({ logger: true });
 
@@ -79,8 +80,8 @@ await app.register(fastifyJwt, {
      *  ROUTES
      * -----------------------
      */
-    await app.register(taskManagements, { prefix: "/api/v1/task_managements" });
-
+    // await app.register(taskManagements, { prefix: "/api/v1/task_managements" });
+await app.register(routes)
     /**
      * -----------------------
      *  BLOCK NON-ALLOWED HTTP METHODS (OPTIONAL)

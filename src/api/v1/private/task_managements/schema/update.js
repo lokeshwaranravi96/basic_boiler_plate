@@ -1,3 +1,4 @@
+import { responseSchema } from "../../../../../helpers/helperFunctions.js";
 
 export const updateTaskSchema = {
   params: {
@@ -13,5 +14,11 @@ export const updateTaskSchema = {
       description: { type: "string" },
       status: { type: "string", enum: ["pending", "in-progress", "done"] }
     }
-  }
+  },
+  response: {
+      201: responseSchema,
+      400: responseSchema,
+      401: responseSchema,
+      500: responseSchema
+    }
 };

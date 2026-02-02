@@ -1,18 +1,20 @@
-import fs from "fs";
-import path from "path";
 
-const tasks = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/helpers/sample_data.json'), 'utf8'));
+import { deleteTask } from "../../../../../interactors/task_managements/index.js";
+import { saveTasksToFile, taskCache, tasks } from "../../../../../services/index.js";
 
 export const deleteTaskHandler = async (req, reply) => {
-  const { id } = req.params;
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { id } = req.params;
 
-  const index = tasks.findIndex((t) => t.id === parseInt(id));
+    await deleteTask({id:Number(id)});
 
-  if (index === -1) {
-    return reply.code(404).send({ message: "Task not found" });
-  }
-
-  tasks.splice(index, 1);
-
-  return { message: "Task deleted successfully" };
-};
+      return resolve({
+        ...globalThis.status_codes.success,
+        message: `Task with id ${id} deleted successfully!`,
+      });
+    } catch (error) {
+      return reject(error);
+    }
+  });
+}

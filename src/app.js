@@ -47,6 +47,7 @@ const startServer = async () => {
     });
 
     await app.listen({ port: process.env.PORT || 3000, host: "0.0.0.0" });
+    console.log("Server is running on port", process.env.PORT || 3000); 
     app.log.info("Server running 🚀");
   } catch (err) {
     app.log.error(err);

@@ -1,3 +1,4 @@
+import { responseSchema } from "../../../../../helpers/helperFunctions.js";
 
 export const getTaskSchema = {
   params: {
@@ -5,22 +6,28 @@ export const getTaskSchema = {
     properties: {
       id: { type: "string" }
     }
-  }
+  },response: {
+      201: responseSchema,
+      400: responseSchema,
+      401: responseSchema,
+      404: responseSchema,
+      500: responseSchema
+    }
 };
 
 
 export const listTasksSchema = {
-  response: {
-    200: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          id: { type: "string" },
-          title: { type: "string" },
-          status: { type: "string" }
-        }
-      }
+   params: {
+    type: "object",
+    properties: {
+      id: { type: "string" }
     }
+  },
+  response: {
+    200:responseSchema,
+      400: responseSchema,
+      401: responseSchema,
+      404: responseSchema,
+      500: responseSchema
   }
 };

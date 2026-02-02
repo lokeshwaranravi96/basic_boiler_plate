@@ -1,179 +1,89 @@
-import fs from "fs";
-import path from "path";
-import NodeCache from "node-cache";
+import { generateTaskId, saveTasksToFile, taskCache, tasks } from "../cache_file_datas/index.js";
 
-const filePath = path.join(process.cwd(), "./src/helpers/sample_data.json");
+/* -----------------------------------------
+   Create Task
+----------------------------------------- */
+export  function createTaskService(options) {
+  return new Promise((resolve, reject) => {
+    try {
 
-// Cache with 0 TTL = store permanently until restart
-const taskCache = new NodeCache({ stdTTL: 0 });
+  const { title, description, status, priority } = options;
+ 
+  // 3️⃣ Create task
+  const newTask = {
+    id: generateTaskId(),
+    title,
+    description,
+    status,
+    priority,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
 
-class TaskManagements {
-  constructor() {
-    this.tasks = this.loadTasksFromFile();
-    this.loadInitialCache(); // Load JSON data into cache on startup
-  }
+  tasks.push(newTask);
+  saveTasksToFile();
+  taskCache.set(newTask.id, newTask);
 
-  // -----------------------------------------
-  // Load tasks from JSON file
-  // -----------------------------------------
-  loadTasksFromFile() {
-  try {
-    const data = fs.readFileSync(filePath, "utf8");
-    const json = JSON.parse(data);
+  return resolve({
+    ...globalThis.status_codes.success,
+    message: "Task created successfully",
+    data: newTask,
+  })
+  
+}
+  catch (error) {
+  console.log('createTaskService error:', error)
+  return  reject(error);
+  } });
+}
 
-    return Array.isArray(json) ? json : [];
-  } catch (err) {
-    console.error("Error loading tasks:", err);
-    return [];
-  }
+/* -----------------------------------------
+   Update Task
+----------------------------------------- */
+export  function updateTaskService(options) {
+  return new Promise(async(resolve,reject)=>{
+    try {
+
+      const { id, title, description, status, priority } = options;
+     
+      const updatedTask = {
+        id,
+        title,
+        description,
+        status,
+        priority,
+        updated_at: new Date().toISOString(),
+      };
+    
+      const index = tasks.findIndex(task => task.id === id);
+     
+      if (index === -1) {
+        return reject({
+          ...globalThis.status_codes.not_found,
+          message: "Task not found",
+        });
+      }
+    
+     
+       tasks[index] = {
+         ...tasks[index],
+         ...updatedTask,
+         updated_at: new Date().toISOString(),
+        };
+        
+      saveTasksToFile();
+      taskCache.set(id, updatedTask);
+    
+      return resolve({
+        success: true,
+        message: "Task updated successfully",
+        data: updatedTask,
+      });
+    } catch (error) {
+      console.log('updateTaskService error:', error)
+      return reject(error);
+    }
+  })
 }
 
 
-  // -----------------------------------------
-  // Save tasks to JSON file
-  // -----------------------------------------
-  saveTasksToFile() {
-    fs.writeFileSync(filePath, JSON.stringify(this.tasks, null, 2));
-  }
-
-  // -----------------------------------------
-  // Load initial cache from file on startup
-  // -----------------------------------------
-  loadInitialCache() {
-  if (!Array.isArray(this.tasks)) {
-    console.error("Tasks is not an array, resetting to []");
-    this.tasks = [];
-  }
-
-  this.tasks.forEach((task) => {
-    taskCache.set(task.title.toLowerCase(), task);
-  });
-}
-
-
-  // -----------------------------------------
-  // Check duplicate in Node Cache
-  // -----------------------------------------
-  existsInCache(title) {
-    return taskCache.has(title);
-  }
-
-  // -----------------------------------------
-  // Check duplicate in JSON file
-  // -----------------------------------------
-  existsInFile(title) {
-    return this.tasks.some(
-     (task) => `task.${title}` === title
-    );
-  }
-
-  // -----------------------------------------
-  // Generate new ID
-  // -----------------------------------------
-  generateTaskId() {
-    return this.tasks.length
-      ? this.tasks[this.tasks.length - 1].id + 1
-      : 1;
-  }
-
-  // -----------------------------------------
-  // Create Task (Cache → File → Insert)
-  // -----------------------------------------
-  async createTask(options) {
-    const { title, description, status, priority } = options;
-    const key = title;
-
-    // 1️⃣ Check Node-Cache first
-    if (this.existsInCache(title)) {
-      return {
-        success: false,
-        code: 409,
-        message: "Task already exists (cache)",
-      };
-    }
-
-    // 2️⃣ Check JSON file second
-    if (this.existsInFile(title)) {
-      return {
-        success: false,
-        code: 409,
-        message: "Task already exists (file)",
-      };
-    }
-
-    // 3️⃣ Create new task
-    const newTask = {
-      id: this.generateTaskId(),
-      title,
-      description,
-      status,
-      priority,
-    //   assigned_to:
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    // Add to file memory
-    this.tasks.push(newTask);
-    this.saveTasksToFile();
-
-    // Add to Node Cache
-    taskCache.set(key, newTask);
-
-    return {
-      success: true,
-      message: "Task created successfully",
-      data: newTask,
-    };
-  }
-
-   async updateTask(options) {
-    const { id,title, description, status, priority } = options;
-    const key = title;
-
-    // 1️⃣ Check Node-Cache first
-    if (this.existsInCache(id)) {
-      return {
-        success: false,
-        code: 409,
-        message: "Task already exists (cache)",
-      };
-    }
-
-    // 2️⃣ Check JSON file second
-    if (this.existsInFile(id)) {
-      return {
-        success: false,
-        code: 409,
-        message: "Task already exists (file)",
-      };
-    }
-
-    // 3️⃣ Update new task
-    const newTask = {
-      id: this.generateTaskId(),
-      title,
-      description,
-      status,
-      priority,
-    //   assigned_to:
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    // Add to file memory
-    this.tasks.push(newTask);
-    this.saveTasksToFile();
-
-    // Add to Node Cache
-    taskCache.set(key, newTask);
-
-    return {
-      success: true,
-      message: "Task created successfully",
-      data: newTask,
-    };
-  }
-}
-
-export const taskManagementServices = new TaskManagements();

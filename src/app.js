@@ -21,8 +21,17 @@ const startServer = async () => {
 
     // 🔥 AUTO LOAD ROUTES (public + private)
     await app.register(AutoLoad, {
-      dir: path.join(__dirname, "api"),
-      options: { prefix: "/api" },
+      dir: path.join(__dirname, "api", "v1"),
+      options: { prefix: "/api/v1" },
+    });
+    
+// ❌ Block URLs containing /public/ or /private/
+    app.addHook("onRequest", (req, reply, done) => {
+      if (req.url.includes("/public/") || req.url.includes("/private/")) {
+        reply.code(404).send({ message: "Route not found" });
+        return;
+      }
+      done();
     });
 
     app.addHook("onRequest", (req, reply, done) => {

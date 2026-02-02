@@ -4,8 +4,8 @@ import { createTask } from "../../../../../interactors/task_managements/index.js
 
 export const createTaskHandler = async (req, reply) => {
   try {
-        // ✅ Get user info from decoded JWT
-    const user = req.user;   
+    // ✅ Get user info from decoded JWT
+    const user = req.user;
     console.log("Logged-in User:", user);
 
     const { title, description, status, priority } = req.body;
@@ -13,27 +13,18 @@ export const createTaskHandler = async (req, reply) => {
     // Call the interactor to create a task
     const result = await createTask({ title, description, status, priority });
 
-    if (!result.success) {
-      
-
-     return send(reply, STATUS.SUCCESS, MESSAGES.TASK.CREATED);
-     
-
+    if (result.success) {
+      // Task created successfully
+      return reply.code(201).send({
+        success: true,
+        message: result.message,
+        data: result.data // Include the created task
+      });
+    } else {
+      return send(reply, STATUS.ERROR, result.message || MESSAGES.SERVER.ERROR);
     }
-
-    // Task created successfully
-    return reply.code(201).send({
-      success: true,
-      message: result.message,
-      data: result.data // Include the created task
-    });
-
-    //  return send(reply, STATUS.SUCCESS, MESSAGES.TASK.CREATED);
-
   } catch (error) {
-
-     return send(reply, STATUS.ERROR, MESSAGES.SERVER.ERROR);
-
-   
+    console.error("Error creating task:", error);
+    return send(reply, STATUS.ERROR, MESSAGES.SERVER.ERROR);
   }
 };

@@ -13,31 +13,8 @@ export default async function taskManagements(fastify, opts) {
   
   // CREATE
   fastify.post("/tasks", {
-    schema: schema.createTaskSchema},
-        handler.createTaskHandler
+    schema: schema.createSchema},
+        handler.createHandler
   );
 
-  // LIST ALL
-  fastify.get("/tasks", {
-    schema: schema.listTasksSchema},
-    handler.listTasksHandler
-  );
-
-  // GET BY ID
-  fastify.get("/tasks/:id", {
-    schema: schema.getTaskSchema},
-    handler.getTaskHandler
-  );
-
-  // UPDATE
-  fastify.put("/tasks/:id", {
-    schema: schema.updateTaskSchema},
-    handler.updateTaskHandler
-  );
-
-  // DELETE
-  fastify.delete("/tasks/:id", {
-    schema: schema.deleteTaskSchema},
-    handler.deleteTaskHandler
-  );
 }

@@ -1,6 +1,6 @@
 import { responseSchema } from "../../../../../helpers/helperFunctions.js";
 
-export const createTaskSchema = {
+export const createSchema = {
  headers: {
     type: "object",
     properties: {

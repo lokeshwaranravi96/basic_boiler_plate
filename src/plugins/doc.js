@@ -1,7 +1,8 @@
+import fp from "fastify-plugin";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
 
-export default async function (fastify, opts) {
+export default fp(async function (fastify) {
   await fastify.register(fastifySwagger, {
     openapi: {
       info: {
@@ -19,9 +20,6 @@ export default async function (fastify, opts) {
 
   await fastify.register(fastifySwaggerUI, {
     routePrefix: "/docs",
-    uiConfig: {
-      docExpansion: "none",
-      deepLinking: false,
-    },
+    exposeRoute: true,
   });
-}
+})
